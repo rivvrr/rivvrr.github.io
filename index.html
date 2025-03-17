@@ -23,10 +23,18 @@
             gap: 10px;
             padding: 10px;
         }
+        .iframe-container {
+            position: relative;
+            resize: both;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            min-width: 300px;
+            min-height: 200px;
+        }
         iframe {
             width: 100%;
-            height: 500px;
-            border: 1px solid #ccc;
+            height: 100%;
+            border: none;
         }
         #notepad {
             margin-top: 10px;
@@ -88,7 +96,7 @@
 
         function renderStores(sortedStores) {
             storeList.innerHTML = '';
-            sortedStores.forEach((store, index) => {
+            sortedStores.forEach(store => {
                 const label = document.createElement('label');
                 label.innerHTML = `<input type="checkbox" value="${store.url}" checked> ${store.name}`;
                 storeList.appendChild(label);
@@ -108,9 +116,12 @@
             content.innerHTML = '';
             const checkedSites = [...storeList.querySelectorAll('input:checked')].map(input => input.value);
             checkedSites.forEach(site => {
+                const container = document.createElement('div');
+                container.classList.add('iframe-container');
                 const iframe = document.createElement('iframe');
                 iframe.src = site;
-                content.appendChild(iframe);
+                container.appendChild(iframe);
+                content.appendChild(container);
             });
         }
 
