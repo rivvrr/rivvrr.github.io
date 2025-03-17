@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utah Dispensary Search</title>
+    <title>Multi-Shop Browser</title>
     <style>
         body {
             display: flex;
@@ -48,7 +48,7 @@
 </head>
 <body>
     <div id="menu">
-        <h3>Show/Hide</h3>
+        <h4>Show/Hide</h4>
         <label for="sort">Sort:</label>
         <select id="sort">
             <option value="default">North to South</option>
@@ -70,8 +70,9 @@
           <label><input type="checkbox" value="https://www.zionmed.com/menu" checked> Zion Medicinal - Cedar City</label><br>
           <label><input type="checkbox" value="https://store-st-george.blocpharmacy.com/stores/bloc-pharmacy-st-george" checked> Bloc - St George</label><br>
         </div>
-      <div id="notepad">
-            <textarea id="notes" placeholder="Notes"></textarea>
+        <div id="notepad">
+            <h3>Notepad</h3>
+            <textarea id="notes" placeholder="Write your notes here..."></textarea>
         </div>
     </div>
     <div id="content"></div>
@@ -104,7 +105,8 @@
             storeList.innerHTML = '';
             stores.forEach(store => storeList.appendChild(store));
         }
-      function toggleCheckboxes() {
+
+        function toggleCheckboxes() {
             const checkboxes = storeList.querySelectorAll('input[type="checkbox"]');
             const allChecked = [...checkboxes].every(checkbox => checkbox.checked);
             checkboxes.forEach(checkbox => checkbox.checked = !allChecked);
