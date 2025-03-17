@@ -50,28 +50,13 @@
     <div id="menu">
         <label for="sort">Sort:</label>
         <select id="sort">
-            <option value="default">North to South</option>
+            <option value="default">Default</option>
             <option value="alpha">Alphabetical</option>
         </select>
-        <div id="store-list">
-          <label><input type="checkbox" value="https://www.iheartjane.com/embed/stores/5150/menu" checked> The Flower Shop - Logan</label><br>
-          <label><input type="checkbox" value="https://www.iheartjane.com/embed/stores/5151/menu/all?currentSort[id]=price-asc&currentSort[suffix]=by-price-" checked> The Flower Shop - Ogden</label><br>
-          <label><input type="checkbox" value="https://www.wholesome.co/shop" checked> WholesomeCo - Bountiful</label><br>
-          <label><input type="checkbox" value="https://dragonflywellness.com/" checked> Dragonfly Wellness - Salt Lake City</label><br>
-          <label><input type="checkbox" value="https://shop.beehivefarmacy.com/stores/beehives-farmacy" checked> Beehive Farmacy - Salt Lake City</label><br>
-          <label><input type="checkbox" value="https://curaleaf.com/shop/utah/curaleaf-ut-wellness-park" checked> Curaleaf - Park City</label><br>
-          <label><input type="checkbox" value="https://store.blocpharmacy.com/stores/bloc-pharmacy-south-jordan" checked> Bloc - South Jordan</label><br>
-          <label><input type="checkbox" value="https://curaleaf.com/shop/utah/curaleaf-ut-lehi" checked> Curaleaf - Lehi</label><br>
-          <label><input type="checkbox" value="https://curaleaf.com/shop/utah/curaleaf-ut-provo" checked> Curaleaf - Provo</label><br>
-          <label><input type="checkbox" value="https://www.iheartjane.com/embed/stores/3196/menu" checked> The Forest (formerly Cannabist) - Springville</label><br>
-          <label><input type="checkbox" value="https://curaleaf.com/shop/utah/curaleaf-ut-payson" checked> Curaleaf - Payson</label><br>
-          <label><input type="checkbox" value="https://price.dragonflywellness.com/" checked> Dragonfly Wellness - Price</label><br>
-          <label><input type="checkbox" value="https://www.zionmed.com/menu" checked> Zion Medicinal - Cedar City</label><br>
-          <label><input type="checkbox" value="https://store-st-george.blocpharmacy.com/stores/bloc-pharmacy-st-george" checked> Bloc - St George</label><br>
-        </div>
+        <button id="toggle-button">Check/Uncheck All</button>
+        <div id="store-list"></div>
         <div id="notepad">
-            <h3>Notepad</h3>
-            <textarea id="notes" placeholder="Write your notes here..."></textarea>
+            <textarea id="notes" placeholder="Notes"></textarea>
         </div>
     </div>
     <div id="content"></div>
@@ -84,6 +69,41 @@
         const toggleButton = document.getElementById('toggle-button');
         const notes = document.getElementById('notes');
 
+        const stores = [
+            { name: "The Flower Shop - Logan", url: "https://www.iheartjane.com/embed/stores/5150/menu" },
+            { name: "The Flower Shop - Ogden", url: "https://www.iheartjane.com/embed/stores/5151/menu/all?currentSort[id]=price-asc&currentSort[suffix]=by-price-" },
+            { name: "WholesomeCo - Bountiful", url: "https://www.wholesome.co/shop" },
+            { name: "Dragonfly Wellness - Salt Lake City", url: "https://dragonflywellness.com/" },
+            { name: "Beehive Farmacy - Salt Lake City", url: "https://shop.beehivefarmacy.com/stores/beehives-farmacy" },
+            { name: "Curaleaf - Park City", url: "https://curaleaf.com/shop/utah/curaleaf-ut-wellness-park" },
+            { name: "Bloc - South Jordan", url: "https://store.blocpharmacy.com/stores/bloc-pharmacy-south-jordan" },
+            { name: "Curaleaf - Lehi", url: "https://curaleaf.com/shop/utah/curaleaf-ut-lehi" },
+            { name: "Curaleaf - Provo", url: "https://curaleaf.com/shop/utah/curaleaf-ut-provo" },
+            { name: "The Forest (formerly Cannabist) - Springville", url: "https://www.iheartjane.com/embed/stores/3196/menu" },
+            { name: "Curaleaf - Payson", url: "https://curaleaf.com/shop/utah/curaleaf-ut-payson" },
+            { name: "Dragonfly Wellness - Price", url: "https://price.dragonflywellness.com/" },
+            { name: "Zion Medicinal - Cedar City", url: "https://www.zionmed.com/menu" },
+            { name: "Bloc - St George", url: "https://store-st-george.blocpharmacy.com/stores/bloc-pharmacy-st-george" }
+        ];
+
+        function renderStores(sortedStores) {
+            storeList.innerHTML = '';
+            sortedStores.forEach((store, index) => {
+                const label = document.createElement('label');
+                label.innerHTML = `<input type="checkbox" value="${store.url}" checked> ${store.name}`;
+                storeList.appendChild(label);
+                storeList.appendChild(document.createElement('br'));
+            });
+        }
+
+        function sortStores() {
+            if (sortSelect.value === 'alpha') {
+                renderStores([...stores].sort((a, b) => a.name.localeCompare(b.name)));
+            } else {
+                renderStores(stores);
+            }
+        }
+
         function updateIframes() {
             content.innerHTML = '';
             const checkedSites = [...storeList.querySelectorAll('input:checked')].map(input => input.value);
@@ -92,17 +112,6 @@
                 iframe.src = site;
                 content.appendChild(iframe);
             });
-        }
-
-        function sortStores() {
-            const stores = [...storeList.children];
-            if (sortSelect.value === 'alpha') {
-                stores.sort((a, b) => a.textContent.trim().localeCompare(b.textContent.trim()));
-            } else {
-                stores.sort((a, b) => a.getAttribute('data-order') - b.getAttribute('data-order'));
-            }
-            storeList.innerHTML = '';
-            stores.forEach(store => storeList.appendChild(store));
         }
 
         function toggleCheckboxes() {
@@ -115,8 +124,8 @@
         toggleButton.addEventListener('click', toggleCheckboxes);
         sortSelect.addEventListener('change', sortStores);
         menu.addEventListener('change', updateIframes);
-        
-        [...storeList.children].forEach((store, index) => store.setAttribute('data-order', index));
+
+        renderStores(stores);
         updateIframes();
     </script>
 </body>
