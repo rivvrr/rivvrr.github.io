@@ -15,6 +15,12 @@
             background: #f4f4f4;
             display: flex;
             flex-direction: column;
+            transition: width 0.3s ease;
+        }
+        #menu.collapsed {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
         }
         #content {
             flex-grow: 1;
@@ -52,10 +58,16 @@
             padding: 5px;
             cursor: pointer;
         }
+        #collapse-button {
+            margin-bottom: 10px;
+            padding: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div id="menu">
+        <button id="collapse-button">Collapse</button>
         <label for="sort">Sort:</label>
         <select id="sort">
             <option value="default">Default</option>
@@ -75,6 +87,7 @@
         const storeList = document.getElementById('store-list');
         const sortSelect = document.getElementById('sort');
         const toggleButton = document.getElementById('toggle-button');
+        const collapseButton = document.getElementById('collapse-button');
         const notes = document.getElementById('notes');
 
         const stores = [
@@ -112,32 +125,20 @@
             }
         }
 
-        function updateIframes() {
-            content.innerHTML = '';
-            const checkedSites = [...storeList.querySelectorAll('input:checked')].map(input => input.value);
-            checkedSites.forEach(site => {
-                const container = document.createElement('div');
-                container.classList.add('iframe-container');
-                const iframe = document.createElement('iframe');
-                iframe.src = site;
-                container.appendChild(iframe);
-                content.appendChild(container);
-            });
+        function toggleMenu() {
+            menu.classList.toggle('collapsed');
+            collapseButton.textContent = menu.classList.contains('collapsed') ? 'Expand' : 'Collapse';
         }
 
-        function toggleCheckboxes() {
+        collapseButton.addEventListener('click', toggleMenu);
+        sortSelect.addEventListener('change', sortStores);
+        toggleButton.addEventListener('click', () => {
             const checkboxes = storeList.querySelectorAll('input[type="checkbox"]');
             const allChecked = [...checkboxes].every(checkbox => checkbox.checked);
             checkboxes.forEach(checkbox => checkbox.checked = !allChecked);
-            updateIframes();
-        }
-
-        toggleButton.addEventListener('click', toggleCheckboxes);
-        sortSelect.addEventListener('change', sortStores);
-        menu.addEventListener('change', updateIframes);
+        });
 
         renderStores(stores);
-        updateIframes();
     </script>
 </body>
 </html>
