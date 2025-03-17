@@ -53,21 +53,19 @@
             height: 100px;
             resize: none;
         }
-        #toggle-button {
+        #toggle-button, #collapse-button, #expand-button {
             margin: 10px 0;
             padding: 5px;
             cursor: pointer;
         }
-        #collapse-button {
-            margin-bottom: 10px;
-            padding: 5px;
-            cursor: pointer;
+        #expand-button {
+            display: none;
         }
     </style>
 </head>
 <body>
+    <button id="expand-button">Expand</button>
     <div id="menu">
-        <button id="collapse-button">Collapse</button>
         <label for="sort">Sort:</label>
         <select id="sort">
             <option value="default">Default</option>
@@ -78,6 +76,7 @@
         <div id="notepad">
             <textarea id="notes" placeholder="Notes"></textarea>
         </div>
+        <button id="collapse-button">Collapse</button>
     </div>
     <div id="content"></div>
     
@@ -88,6 +87,7 @@
         const sortSelect = document.getElementById('sort');
         const toggleButton = document.getElementById('toggle-button');
         const collapseButton = document.getElementById('collapse-button');
+        const expandButton = document.getElementById('expand-button');
         const notes = document.getElementById('notes');
 
         const stores = [
@@ -111,7 +111,7 @@
             storeList.innerHTML = '';
             sortedStores.forEach(store => {
                 const label = document.createElement('label');
-                label.innerHTML = `<input type="checkbox" value="${store.url}" checked> ${store.name}`;
+                label.innerHTML = `<input type="checkbox" value="${store.url}"> ${store.name}`;
                 storeList.appendChild(label);
                 storeList.appendChild(document.createElement('br'));
             });
@@ -127,10 +127,17 @@
 
         function toggleMenu() {
             menu.classList.toggle('collapsed');
-            collapseButton.textContent = menu.classList.contains('collapsed') ? 'Expand' : 'Collapse';
+            if (menu.classList.contains('collapsed')) {
+                collapseButton.style.display = 'none';
+                expandButton.style.display = 'block';
+            } else {
+                collapseButton.style.display = 'block';
+                expandButton.style.display = 'none';
+            }
         }
 
         collapseButton.addEventListener('click', toggleMenu);
+        expandButton.addEventListener('click', toggleMenu);
         sortSelect.addEventListener('change', sortStores);
         toggleButton.addEventListener('click', () => {
             const checkboxes = storeList.querySelectorAll('input[type="checkbox"]');
