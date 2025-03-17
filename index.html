@@ -112,8 +112,22 @@
             sortedStores.forEach(store => {
                 const label = document.createElement('label');
                 label.innerHTML = `<input type="checkbox" value="${store.url}"> ${store.name}`;
+                const checkbox = label.querySelector('input');
+                checkbox.addEventListener('change', updateIframes);
                 storeList.appendChild(label);
                 storeList.appendChild(document.createElement('br'));
+            });
+        }
+
+        function updateIframes() {
+            content.innerHTML = '';
+            document.querySelectorAll('#store-list input[type="checkbox"]:checked').forEach(checkbox => {
+                const iframeContainer = document.createElement('div');
+                iframeContainer.classList.add('iframe-container');
+                const iframe = document.createElement('iframe');
+                iframe.src = checkbox.value;
+                iframeContainer.appendChild(iframe);
+                content.appendChild(iframeContainer);
             });
         }
 
@@ -143,6 +157,7 @@
             const checkboxes = storeList.querySelectorAll('input[type="checkbox"]');
             const allChecked = [...checkboxes].every(checkbox => checkbox.checked);
             checkboxes.forEach(checkbox => checkbox.checked = !allChecked);
+            updateIframes();
         });
 
         renderStores(stores);
