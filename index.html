@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utah Dispensary Search</title>
+    <style>
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+        }
+        #menu {
+            width: 200px;
+            padding: 10px;
+            background: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+        }
+        #content {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 10px;
+        }
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+        }
+        #notepad {
+            margin-top: 10px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            resize: none;
+        }
+        #toggle-button {
+            margin: 10px 0;
+            padding: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu">
+        <h3>Show/Hide</h3>
+        <label for="sort">Sort:</label>
+        <select id="sort">
+            <option value="default">North to South</option>
+            <option value="alpha">Alphabetical</option>
+        </select>
+        <div id="store-list">
+          <label><input type="checkbox" value="https://www.iheartjane.com/embed/stores/5150/menu" checked> The Flower Shop - Logan</label><br>
+          <label><input type="checkbox" value="https://www.iheartjane.com/embed/stores/5151/menu/all?currentSort[id]=price-asc&currentSort[suffix]=by-price-" checked> The Flower Shop - Ogden</label><br>
+          <label><input type="checkbox" value="https://www.wholesome.co/shop" checked> WholesomeCo - Bountiful</label><br>
+          <label><input type="checkbox" value="https://dragonflywellness.com/" checked> Dragonfly Wellness - Salt Lake City</label><br>
+          <label><input type="checkbox" value="https://shop.beehivefarmacy.com/stores/beehives-farmacy" checked> Beehive Farmacy - Salt Lake City</label><br>
+          <label><input type="checkbox" value="https://curaleaf.com/shop/utah/curaleaf-ut-wellness-park" checked> Curaleaf - Park City</label><br>
+          <label><input type="checkbox" value="https://store.blocpharmacy.com/stores/bloc-pharmacy-south-jordan" checked> Bloc - South Jordan</label><br>
+          <label><input type="checkbox" value="https://curaleaf.com/shop/utah/curaleaf-ut-lehi" checked> Curaleaf - Lehi</label><br>
+          <label><input type="checkbox" value="https://curaleaf.com/shop/utah/curaleaf-ut-provo" checked> Curaleaf - Provo</label><br>
+          <label><input type="checkbox" value="https://www.iheartjane.com/embed/stores/3196/menu" checked> The Forest (formerly Cannabist) - Springville</label><br>
+          <label><input type="checkbox" value="https://curaleaf.com/shop/utah/curaleaf-ut-payson" checked> Curaleaf - Payson</label><br>
+          <label><input type="checkbox" value="https://price.dragonflywellness.com/" checked> Dragonfly Wellness - Price</label><br>
+          <label><input type="checkbox" value="https://www.zionmed.com/menu" checked> Zion Medicinal - Cedar City</label><br>
+          <label><input type="checkbox" value="https://store-st-george.blocpharmacy.com/stores/bloc-pharmacy-st-george" checked> Bloc - St George</label><br>
+        </div>
+      <div id="notepad">
+            <textarea id="notes" placeholder="Notes"></textarea>
+        </div>
+    </div>
+    <div id="content"></div>
+    
+    <script>
+        const menu = document.getElementById('menu');
+        const content = document.getElementById('content');
+        const storeList = document.getElementById('store-list');
+        const sortSelect = document.getElementById('sort');
+        const toggleButton = document.getElementById('toggle-button');
+        const notes = document.getElementById('notes');
+
+        function updateIframes() {
+            content.innerHTML = '';
+            const checkedSites = [...storeList.querySelectorAll('input:checked')].map(input => input.value);
+            checkedSites.forEach(site => {
+                const iframe = document.createElement('iframe');
+                iframe.src = site;
+                content.appendChild(iframe);
+            });
+        }
+
+        function sortStores() {
+            const stores = [...storeList.children];
+            if (sortSelect.value === 'alpha') {
+                stores.sort((a, b) => a.textContent.trim().localeCompare(b.textContent.trim()));
+            } else {
+                stores.sort((a, b) => a.getAttribute('data-order') - b.getAttribute('data-order'));
+            }
+            storeList.innerHTML = '';
+            stores.forEach(store => storeList.appendChild(store));
+        }
+      function toggleCheckboxes() {
+            const checkboxes = storeList.querySelectorAll('input[type="checkbox"]');
+            const allChecked = [...checkboxes].every(checkbox => checkbox.checked);
+            checkboxes.forEach(checkbox => checkbox.checked = !allChecked);
+            updateIframes();
+        }
+
+        toggleButton.addEventListener('click', toggleCheckboxes);
+        sortSelect.addEventListener('change', sortStores);
+        menu.addEventListener('change', updateIframes);
+        
+        [...storeList.children].forEach((store, index) => store.setAttribute('data-order', index));
+        updateIframes();
+    </script>
+</body>
+</html>
